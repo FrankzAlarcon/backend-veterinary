@@ -51,6 +51,7 @@ class PatientService {
     this.patients[index] = {
       id: patient.id,
       ...data,
+      createdAt: patient.createdAt,
     };
     return this.patients[index];
   }

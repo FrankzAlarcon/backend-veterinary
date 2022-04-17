@@ -35,6 +35,7 @@ class AppointmentsService {
     this.appointments[index] = {
       id: appointment.id,
       ...data,
+      createdAt: appointment.createdAt,
     };
     return this.appointments[index];
   }
