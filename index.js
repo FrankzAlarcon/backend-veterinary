@@ -1,0 +1,20 @@
+const express = require('express');
+const cors = require('cors');
+const appRouter = require('./src/routes');
+const { boomErrorHandler, errorHandler, logError } = require('./src/middlewares/error.handler');
+
+const app = express();
+const PORT = process.env.PORT ?? 3000;
+
+app.use(express.json());
+app.use(cors());
+
+appRouter(app);
+
+app.use(logError);
+app.use(boomErrorHandler);
+app.use(errorHandler);
+
+app.listen(PORT, () => {
+  console.log('Server running on port', PORT);
+});
