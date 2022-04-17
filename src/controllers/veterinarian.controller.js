@@ -8,7 +8,6 @@ const veterinarianService = new VeterinarianService();
 
 router.get('/', async (req, res, next) => {
   try {
-    // text
     const veterinarians = await veterinarianService.getAll();
     response.success(res, veterinarians);
   } catch (error) {
@@ -36,12 +35,34 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+router.post('/:id/create-task', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { body } = req;
+    const task = await veterinarianService.createTask(id, body);
+    response.success(res, task, 201);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.put('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const { body } = req;
     const updatedVet = await veterinarianService.totalUpdate(id, body);
     response.success(res, updatedVet);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.put('/:veterinarianId/update-task/:taskId', async (req, res, next) => {
+  try {
+    const { taskId, veterinarianId } = req.params;
+    const { body } = req;
+    const updatedTask = await veterinarianService.totalTaskUpdate(veterinarianId, taskId, body);
+    response.success(res, updatedTask);
   } catch (error) {
     next(error);
   }
@@ -58,11 +79,32 @@ router.patch('/:id', async (req, res, next) => {
   }
 });
 
+router.patch('/:veterinarianId/update-task/:taskId', async (req, res, next) => {
+  try {
+    const { taskId, veterinarianId } = req.params;
+    const { body } = req;
+    const updatedTask = await veterinarianService.partialTaskUpdate(veterinarianId, taskId, body);
+    response.success(res, updatedTask);
+  } catch (error) {
+    next(error);
+  }
+});
+
 router.delete('/:id', async (req, res, next) => {
   try {
     const { id } = req.params;
     const deletedVet = await veterinarianService.delete(id);
     response.success(res, deletedVet);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.delete('/:veterinarianId/delete-task/:taskId', async (req, res, next) => {
+  try {
+    const { taskId, veterinarianId } = req.params;
+    const deletedTask = await veterinarianService.deleteTask(veterinarianId, taskId);
+    response.success(res, deletedTask);
   } catch (error) {
     next(error);
   }
