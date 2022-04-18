@@ -32,8 +32,13 @@ const PatientSchema = {
 };
 
 class Patient extends Model {
-  static associate() {
-    // code
+  static associate(models) {
+    this.belongsToMany(models.Veterinarian, {
+      through: models.Appointment,
+      as: 'appointments',
+      foreignKey: 'patientId',
+      otherKey: 'veterinarianId',
+    });
   }
 
   static config(sequelize) {

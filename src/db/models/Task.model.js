@@ -38,9 +38,8 @@ const TaskSchema = {
 };
 
 class Task extends Model {
-  static associate() {
-    // code
-    // this.belongsTo(models.Veterinarian)
+  static associate(models) {
+    this.belongsTo(models.Veterinarian, { as: 'veterinarian' });
   }
 
   static config(sequelize) {

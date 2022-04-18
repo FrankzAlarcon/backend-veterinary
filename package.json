@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "migrations:generate": "sequelize-cli model:generate --name",
+    "migrations:run": "sequelize-cli db:migrate"
   },
   "keywords": [],
   "author": "Frankz Alarcon <leninalarcon7@gmail.com>",
