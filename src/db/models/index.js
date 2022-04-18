@@ -8,6 +8,9 @@ function setupModels(sequelize) {
   Patient.init(PatientSchema, Patient.config(sequelize));
   Task.init(TaskSchema, Task.config(sequelize));
   Appointment.init(AppointmentsSchema, Appointment.config(sequelize));
+
+  Veterinarian.associate(sequelize.models);
+  Patient.associate(sequelize.models);
 }
 
 module.exports = setupModels;

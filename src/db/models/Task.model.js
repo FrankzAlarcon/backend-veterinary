@@ -1,6 +1,7 @@
 const { DataTypes, Sequelize, Model } = require('sequelize');
 
 const tasksTableName = 'tasks';
+const { veterinarianTableName } = require('./Veterinarian.model');
 
 const TaskSchema = {
   id: {
@@ -29,7 +30,7 @@ const TaskSchema = {
     allowNull: false,
     field: 'veterinarian_id',
     references: {
-      model: 'Veterinarian',
+      model: veterinarianTableName,
       key: 'id',
     },
     onUpdate: 'CASCADE',

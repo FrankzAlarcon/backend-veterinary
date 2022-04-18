@@ -1,5 +1,8 @@
 const { DataTypes, Sequelize, Model } = require('sequelize');
 
+const { veterinarianTableName } = require('./Veterinarian.model');
+const { patientTableName } = require('./Patient.model');
+
 const appointmentsTableName = 'appointments';
 
 const AppointmentsSchema = {
@@ -31,11 +34,11 @@ const AppointmentsSchema = {
     type: DataTypes.FLOAT,
     defaultValue: 0,
   },
-  veterinaryId: {
+  veterinarianId: {
     type: DataTypes.INTEGER,
     field: 'veterinary_id',
     references: {
-      model: 'Veterinarian',
+      model: veterinarianTableName,
       key: 'id',
     },
     onDelete: 'SET NULL',
@@ -45,7 +48,7 @@ const AppointmentsSchema = {
     type: DataTypes.INTEGER,
     field: 'patient_id',
     references: {
-      model: 'Patient',
+      model: patientTableName,
       key: 'id',
     },
     onUpdate: 'CASCADE',
@@ -60,7 +63,7 @@ const AppointmentsSchema = {
 };
 
 class Appointment extends Model {
-  static associote() {
+  static associate() {
 
   }
 
