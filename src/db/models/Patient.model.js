@@ -33,9 +33,10 @@ const PatientSchema = {
 
 class Patient extends Model {
   static associate(models) {
+    this.hasMany(models.Appointment, { as: 'appointments', foreignKey: 'patientId' });
     this.belongsToMany(models.Veterinarian, {
       through: models.Appointment,
-      as: 'appointments',
+      as: 'veterinarians',
       foreignKey: 'patientId',
       otherKey: 'veterinarianId',
     });

@@ -1,137 +1,116 @@
-const Chance = require('chance').Chance();
 const boom = require('@hapi/boom');
+const { models } = require('../db/sequelize');
 
 class VeterinarianService {
-  constructor() {
-    this.veterinarians = [];
-    this.tasks = [];
-    this.generate();
-  }
-
-  generate() {
-    const size = 10;
-    for (let i = 0; i < size; i++) {
-      this.veterinarians.push({
-        id: i + 1,
-        name: Chance.name(),
-        email: Chance.email(),
-        password: Chance.guid(),
-        createdAt: Chance.date({ year: 2022 }),
-      });
-    }
-  }
-
   async getAll() {
-    const { veterinarians } = this;
+    const veterinarians = await models.Veterinarian.findAll();
     return veterinarians;
   }
 
   async getOne(id) {
-    const veterinarian = this.veterinarians.find((vet) => vet.id === Number(id));
+    const veterinarian = await models.Veterinarian.findOne({
+      id,
+      include: [
+        {
+          association: 'tasks',
+          attributes: {
+            exclude: 'veterinarianId',
+          },
+        },
+        {
+          association: 'appointments',
+          include: [
+            {
+              association: 'patient',
+              attributes: {
+                exclude: 'createdAt',
+              },
+            },
+          ],
+          attributes: {
+            exclude: ['veterinarianId', 'patientId'],
+          },
+        },
+      ],
+    });
     if (!veterinarian) {
       throw boom.notFound('Veterinarian not found');
     }
-    const tasks = this.tasks.filter((task) => task.veterinarianId === id);
-    return { ...veterinarian, tasks: [...tasks] };
+    return veterinarian;
   }
 
   async create(data) {
-    const newVeterinarian = {
-      id: this.veterinarians.length + 1,
-      ...data,
-      createdAt: Chance.date({ year: 2022 }),
-    };
-    this.veterinarians.push(newVeterinarian);
+    const newVeterinarian = await models.Veterinarian.create(data);
     return newVeterinarian;
   }
 
   async createTask(id, data) {
-    const veterinarianExist = this.veterinarians.find((vet) => vet.id === Number(id));
-    if (!veterinarianExist) {
+    const veterinarianExists = await models.Veterinarian.findByPk(id);
+    if (!veterinarianExists) {
       throw boom.notFound('Veterinarian not found');
     }
-    const newTask = {
-      id: this.tasks.length + 1,
-      ...data,
-      veterinarianId: id,
-      createdAt: Chance.date({ year: 2022 }),
-    };
-    this.tasks.push(newTask);
+    const newTask = await models.Task.create({ ...data, veterinarianId: id });
     return newTask;
   }
 
   async totalUpdate(id, data) {
-    const index = this.veterinarians.findIndex((vet) => vet.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Veterinarian not found');
-    }
-    const veterinarian = this.veterinarians[index];
-    this.veterinarians[index] = {
-      id: veterinarian.id,
-      ...data,
-      createdAt: veterinarian.createdAt,
-    };
-    return this.veterinarians[index];
+    const veterinarian = await this.getOne(id);
+    const updatedVet = veterinarian.update(data);
+    return updatedVet;
   }
 
   async totalTaskUpdate(veterinarianId, taskId, data) {
-    const veterinarian = await this.getOne(veterinarianId);
-    const taskIndex = veterinarian.tasks.findIndex((task) => task.id === Number(taskId));
-    if (taskIndex === -1) {
+    const task = await models.Task.findOne({
+      where: {
+        veterinarianId,
+        id: taskId,
+      },
+    });
+    if (!task) {
       throw boom.notFound('Task not found');
     }
-    const task = this.tasks[taskIndex];
-    this.tasks[taskIndex] = {
-      ...task,
-      ...data,
-    };
-    return this.tasks[taskIndex];
+    const updatedTask = await task.update(data);
+    return updatedTask;
   }
 
   async partialUpdate(id, changes) {
-    const index = this.veterinarians.findIndex((vet) => vet.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Veterinarian not found');
-    }
-    const veterinarian = this.veterinarians[index];
-    this.veterinarians[index] = {
-      ...veterinarian,
-      ...changes,
-    };
-    return this.veterinarians[index];
+    const veterinarian = await this.getOne(id);
+    const updatedVet = await veterinarian.update(changes);
+    return updatedVet;
   }
 
   async partialTaskUpdate(veterinarianId, taskId, changes) {
-    const veterinarian = await this.getOne(veterinarianId);
-    const taskIndex = veterinarian.tasks.findIndex((task) => task.id === Number(taskId));
-    if (taskIndex === -1) {
+    const task = await models.Task.findOne({
+      where: {
+        veterinarianId,
+        id: taskId,
+      },
+    });
+    if (!task) {
       throw boom.notFound('Task not found');
     }
-    const task = this.tasks[taskIndex];
-    this.tasks[taskIndex] = {
-      ...task,
-      ...changes,
-    };
-    return this.tasks[taskIndex];
+    const updatedTask = await task.update(changes);
+    return updatedTask;
   }
 
   async delete(id) {
-    const index = this.veterinarians.findIndex((vet) => vet.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Veterinarian not found');
-    }
-    const deletedVet = this.veterinarians.splice(index, 1);
-    return { deleted: true, data: deletedVet };
+    const veterinarian = await this.getOne(id);
+    await veterinarian.destroy();
+    return { deleted: true, data: veterinarian };
   }
 
   async deleteTask(veterinarianId, taskId) {
-    const veterinarian = await this.getOne(veterinarianId);
-    const taskIndex = veterinarian.tasks.findIndex((task) => task.id === Number(taskId));
-    if (taskIndex === -1) {
+    const task = await models.Task.findOne({
+      where: {
+        veterinarianId,
+        id: taskId,
+      },
+    });
+    if (!task) {
       throw boom.notFound('Task not found');
     }
-    const deletedTask = this.tasks.splice(taskIndex, 1);
-    return { deleted: true, data: deletedTask };
+    await task.destroy();
+    return { deleted: true, data: task };
   }
 }
 

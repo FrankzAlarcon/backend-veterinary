@@ -11,6 +11,7 @@ function setupModels(sequelize) {
 
   Veterinarian.associate(sequelize.models);
   Patient.associate(sequelize.models);
+  Appointment.associate(sequelize.models);
 }
 
 module.exports = setupModels;

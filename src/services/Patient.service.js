@@ -1,31 +1,29 @@
-const Chance = require('chance').Chance();
 const boom = require('@hapi/boom');
+const { models } = require('../db/sequelize');
 
 class PatientService {
-  constructor() {
-    this.patients = [];
-    this.generate();
-  }
-
-  generate() {
-    const size = 20;
-    for (let i = 0; i < size; i++) {
-      this.patients.push({
-        id: i + 1,
-        name: Chance.name(),
-        petName: Chance.first(),
-        email: Chance.email(),
-        createdAt: Chance.date({ year: 2022 }),
-      });
-    }
-  }
-
   async getAll() {
-    return this.patients;
+    const patients = await models.Patient.findAll();
+    return patients;
   }
 
   async getOne(id) {
-    const patient = this.patients.find((pat) => pat.id === Number(id));
+    const patient = await models.Patient.findByPk(id, {
+      include: {
+        association: 'appointments',
+        attributes: {
+          exclude: ['patientId', 'veterinarianId'],
+        },
+        include: [
+          {
+            association: 'veterinarian',
+            attributes: {
+              exclude: ['password', 'createdAt'],
+            },
+          },
+        ],
+      },
+    });
     if (!patient) {
       throw boom.notFound('Patient not found');
     }
@@ -33,49 +31,26 @@ class PatientService {
   }
 
   async create(data) {
-    const newPatient = {
-      id: this.patients.length + 1,
-      ...data,
-      createdAt: Chance.date({ year: 2022 }),
-    };
-    this.patients.push(newPatient);
+    const newPatient = await models.Patient.create(data);
     return newPatient;
   }
 
   async totalUpdate(id, data) {
-    const index = this.patients.findIndex((pat) => pat.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Patients not found');
-    }
-    const patient = this.patients[index];
-    this.patients[index] = {
-      id: patient.id,
-      ...data,
-      createdAt: patient.createdAt,
-    };
-    return this.patients[index];
+    const patient = await this.getOne(id);
+    const updatedPatient = await patient.update(data);
+    return updatedPatient;
   }
 
   async partialUpdate(id, changes) {
-    const index = this.patients.findIndex((pat) => pat.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Patient not found');
-    }
-    const patient = this.patients[index];
-    this.patients[index] = {
-      ...patient,
-      ...changes,
-    };
-    return this.patients[index];
+    const patient = await this.getOne(id);
+    const updatedPatient = await patient.update(changes);
+    return updatedPatient;
   }
 
   async delete(id) {
-    const index = this.patients.findIndex((pat) => pat.id === Number(id));
-    if (index === -1) {
-      throw boom.notFound('Patient not found');
-    }
-    const deletedPat = this.patients.splice(index, 1);
-    return { deleted: true, data: deletedPat };
+    const patient = await this.getOne(id);
+    await patient.destroy();
+    return { deleted: true, data: patient };
   }
 }
 

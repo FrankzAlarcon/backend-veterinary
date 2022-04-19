@@ -36,7 +36,7 @@ const AppointmentsSchema = {
   },
   veterinarianId: {
     type: DataTypes.INTEGER,
-    field: 'veterinary_id',
+    field: 'veterinarian_id',
     references: {
       model: veterinarianTableName,
       key: 'id',
@@ -63,8 +63,9 @@ const AppointmentsSchema = {
 };
 
 class Appointment extends Model {
-  static associate() {
-
+  static associate(models) {
+    this.belongsTo(models.Veterinarian, { as: 'veterinarian' });
+    this.belongsTo(models.Patient, { as: 'patient' });
   }
 
   static config(sequelize) {

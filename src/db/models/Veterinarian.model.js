@@ -33,8 +33,9 @@ const VeterinarianSchema = {
 class Veterinarian extends Model {
   static associate(models) {
     this.hasMany(models.Task, { as: 'tasks', foreignKey: 'veterinarianId' });
+    this.hasMany(models.Appointment, { as: 'appointments', foreignKey: 'veterinarianId' });
     this.belongsToMany(models.Patient, {
-      as: 'appointments',
+      as: 'patients',
       through: models.Appointment,
       foreignKey: 'veterinarianId',
       otherKey: 'patientId',
