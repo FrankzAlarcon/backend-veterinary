@@ -2,15 +2,19 @@ const { Sequelize } = require('sequelize');
 const config = require('../config');
 const setupModels = require('./models/index');
 
-const DB_USER = encodeURIComponent(config.dbUser);
-const DB_PASSWORD = encodeURIComponent(config.dbPassword);
-
-const URI = `postgres://${DB_USER}:${DB_PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
-
-const sequelize = new Sequelize(URI, {
+const options = {
   dialect: 'postgres',
-  logging: console.log,
-});
+  logging: config.isProd ? false : console.log,
+};
+if (config.isProd) {
+  options.dialectOptions = {
+    ssl: {
+      rejectUnauthorized: false,
+    },
+  };
+}
+
+const sequelize = new Sequelize(config.dbUri, options);
 
 setupModels(sequelize);
 
