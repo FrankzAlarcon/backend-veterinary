@@ -12,10 +12,10 @@ module.exports = {
      * Example:
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
-    await queryInterface.createTable(tasksTableName, TaskSchema);
-    await queryInterface.createTable(appointmentsTableName, AppointmentsSchema);
     await queryInterface.createTable(veterinarianTableName, VeterinarianSchema);
     await queryInterface.createTable(patientTableName, PatientSchema);
+    await queryInterface.createTable(tasksTableName, TaskSchema);
+    await queryInterface.createTable(appointmentsTableName, AppointmentsSchema);
   },
 
   async down(queryInterface, _Sequelize) {
