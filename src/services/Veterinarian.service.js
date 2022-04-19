@@ -8,8 +8,7 @@ class VeterinarianService {
   }
 
   async getOne(id) {
-    const veterinarian = await models.Veterinarian.findOne({
-      id,
+    const veterinarian = await models.Veterinarian.findByPk(id, {
       include: [
         {
           association: 'tasks',
