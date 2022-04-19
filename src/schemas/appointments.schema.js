@@ -24,6 +24,7 @@ const updateAppointmentSchema = Joi.object({
   patientId,
   date,
   prescription,
+  symptoms,
   isCompleted,
   price,
 });
