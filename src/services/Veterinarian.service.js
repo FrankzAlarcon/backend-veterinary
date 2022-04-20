@@ -4,7 +4,11 @@ const { models } = require('../db/sequelize');
 
 class VeterinarianService {
   async getAll() {
-    const veterinarians = await models.Veterinarian.findAll();
+    const veterinarians = await models.Veterinarian.findAll({
+      attributes: {
+        exclude: ['password'],
+      },
+    });
     return veterinarians;
   }
 
@@ -28,7 +32,7 @@ class VeterinarianService {
             },
           ],
           attributes: {
-            exclude: ['veterinarianId', 'patientId'],
+            exclude: ['veterinarianId', 'patientId', 'password'],
           },
         },
       ],
