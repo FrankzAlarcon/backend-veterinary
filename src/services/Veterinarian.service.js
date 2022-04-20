@@ -36,6 +36,9 @@ class VeterinarianService {
           },
         },
       ],
+      attributes: {
+        exclude: ['password'],
+      },
     });
     if (!veterinarian) {
       throw boom.notFound('Veterinarian not found');
