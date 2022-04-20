@@ -6,7 +6,7 @@ const {
 } = require('./src/middlewares/error.handler');
 
 const app = express();
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 3100;
 
 app.use(express.json());
 app.use(cors());

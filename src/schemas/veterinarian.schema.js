@@ -41,6 +41,17 @@ const updateTaskSchema = Joi.object({
   priority,
 });
 
+const loginSchema = Joi.object({
+  email: email.required(),
+  password: password.required(),
+});
+
+const registerSchema = Joi.object({
+  name: name.required(),
+  email: email.required(),
+  password: password.required(),
+});
+
 module.exports = {
   createTaskSchema,
   createVeterinarianSchema,
@@ -48,4 +59,6 @@ module.exports = {
   updateTaskSchema,
   getTaskFromVeterinarianSchema,
   getVeterinarianByIdSchema,
+  loginSchema,
+  registerSchema,
 };

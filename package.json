@@ -16,6 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@hapi/boom": "^9.1.4",
+    "bcrypt": "^5.0.1",
     "chance": "^1.1.8",
     "cors": "^2.8.5",
     "dotenv": "^16.0.0",
@@ -30,7 +31,7 @@
     "eslint": "^8.13.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.26.0",
-    "nodemon": "^2.0.15"    
+    "nodemon": "^2.0.15"
   },
   "engines": {
     "node": "16.x"

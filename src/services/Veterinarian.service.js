@@ -1,4 +1,5 @@
 const boom = require('@hapi/boom');
+const bcrypt = require('bcrypt');
 const { models } = require('../db/sequelize');
 
 class VeterinarianService {
@@ -43,6 +44,39 @@ class VeterinarianService {
     return newVeterinarian;
   }
 
+  async register(data) {
+    const { email } = data;
+    const isAlreadyRegistered = await models.Veterinarian.findOne({
+      where: {
+        email,
+      },
+    });
+    if (isAlreadyRegistered) {
+      throw boom.conflict('Un usuario con este email ya se encuentra registrado');
+    }
+    const hashedPassword = await bcrypt.hash(data.password, 10);
+    data.password = hashedPassword;
+    const newVeterinarian = await models.Veterinarian.create(data);
+    return newVeterinarian;
+  }
+
+  async login(credentials) {
+    const { email, password } = credentials;
+    const user = await models.Veterinarian.findOne({
+      where: {
+        email,
+      },
+    });
+    if (!user) {
+      throw boom.conflict('No existe un usuario registrado con este correo');
+    }
+    const matchPassword = await bcrypt.compare(password, user.getDataValue('password'));
+    if (!matchPassword) {
+      return { isLogged: matchPassword };
+    }
+    return { isLogged: matchPassword, key: user.getDataValue('id') };
+  }
+
   async createTask(id, data) {
     const veterinarianExists = await models.Veterinarian.findByPk(id);
     if (!veterinarianExists) {
@@ -54,6 +88,10 @@ class VeterinarianService {
 
   async totalUpdate(id, data) {
     const veterinarian = await this.getOne(id);
+    const { password } = data;
+    if (password) {
+      data.password = await bcrypt.hash(password, 10);
+    }
     const updatedVet = veterinarian.update(data);
     return updatedVet;
   }
@@ -74,6 +112,10 @@ class VeterinarianService {
 
   async partialUpdate(id, changes) {
     const veterinarian = await this.getOne(id);
+    const { password } = changes;
+    if (password) {
+      changes.password = await bcrypt.hash(password, 10);
+    }
     const updatedVet = await veterinarian.update(changes);
     return updatedVet;
   }

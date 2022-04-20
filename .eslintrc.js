@@ -13,5 +13,6 @@ module.exports = {
   rules: {
     'no-plusplus': 'off',
     'class-methods-use-this': 'off',
+    'no-param-reassign': ['error', { props: true, ignorePropertyModificationsFor: ['data', 'changes'] }],
   },
 };

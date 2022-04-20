@@ -5,6 +5,7 @@ const validationHandler = require('../middlewares/validation.handler');
 const {
   createTaskSchema, createVeterinarianSchema, getVeterinarianByIdSchema,
   updateTaskSchema, updateVeterinarianSchema, getTaskFromVeterinarianSchema,
+  loginSchema, registerSchema,
 } = require('../schemas/veterinarian.schema');
 
 const response = new Response();
@@ -33,14 +34,42 @@ router.get(
   },
 );
 
+// router.post(
+//   '/',
+//   validationHandler(createVeterinarianSchema, 'body'),
+//   async (req, res, next) => {
+//     try {
+//       const { body } = req;
+//       const veterinarian = await veterinarianService.create(body);
+//       response.success(res, veterinarian, 201);
+//     } catch (error) {
+//       next(error);
+//     }
+//   },
+// );
+
 router.post(
-  '/',
-  validationHandler(createVeterinarianSchema, 'body'),
+  '/register',
+  validationHandler(registerSchema, 'body'),
   async (req, res, next) => {
     try {
-      const { body } = req;
-      const veterinarian = await veterinarianService.create(body);
-      response.success(res, veterinarian, 201);
+      const data = req.body;
+      const isRegister = await veterinarianService.register(data);
+      response.success(res, isRegister, 200);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
+router.post(
+  '/login',
+  validationHandler(loginSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const credentials = req.body;
+      const isLogin = await veterinarianService.login(credentials);
+      response.success(res, isLogin);
     } catch (error) {
       next(error);
     }
