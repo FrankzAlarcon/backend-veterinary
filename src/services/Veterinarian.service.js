@@ -32,10 +32,13 @@ class VeterinarianService {
             },
           ],
           attributes: {
-            exclude: ['veterinarianId', 'patientId', 'password'],
+            exclude: ['veterinarianId', 'patientId'],
           },
         },
       ],
+      attributes: {
+        exclude: ['password'],
+      },
     });
     if (!veterinarian) {
       throw boom.notFound('Veterinarian not found');
