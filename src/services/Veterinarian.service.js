@@ -48,12 +48,24 @@ class VeterinarianService {
   }
 
   async getPatients(id) {
-    const query = `select distinct patients.id, patients.name, pet_name, email ,
-    count(appointments.id) as total_appointments
-    from patients
+    const query = `select distinct patients.id, patients.name, pet_name,
+    email, citas_terminadas, citas_pendientes from patients
     join appointments on (patients.id = appointments.patient_id)
-    where appointments.veterinarian_id = ${id}
-    group by patients.id`;
+    left join (
+      select patients.id, count(*) as citas_pendientes from patients
+      join appointments on patients.id = appointments.patient_id
+      where appointments.veterinarian_id = ${id}
+      and appointments.is_completed = false
+      group by patients.id
+    ) as citas2 on citas2.id = patients.id
+    left join (
+      select patients.id, count(*) as citas_terminadas from patients
+      join appointments on patients.id = appointments.patient_id
+      where appointments.veterinarian_id = ${id}
+      and appointments.is_completed = true
+      group by patients.id
+    ) as citas on citas.id = patients.id
+    where appointments.veterinarian_id = ${id}`;
     const patients = await sequelize.query(query);
     return patients[0];
   }
