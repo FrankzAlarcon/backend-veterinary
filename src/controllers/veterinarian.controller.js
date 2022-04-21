@@ -34,6 +34,20 @@ router.get(
   },
 );
 
+router.get(
+  '/:id/patients',
+  validationHandler(getVeterinarianByIdSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const patients = await veterinarianService.getPatients(id);
+      response.success(res, patients);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // router.post(
 //   '/',
 //   validationHandler(createVeterinarianSchema, 'body'),

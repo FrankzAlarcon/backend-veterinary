@@ -1,7 +1,8 @@
 const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
-const { models } = require('../db/sequelize');
+const sequelize = require('../db/sequelize');
 
+const { models } = sequelize;
 class VeterinarianService {
   async getAll() {
     const veterinarians = await models.Veterinarian.findAll({
@@ -44,6 +45,17 @@ class VeterinarianService {
       throw boom.notFound('Veterinarian not found');
     }
     return veterinarian;
+  }
+
+  async getPatients(id) {
+    const query = `select distinct patients.id, patients.name, pet_name, email ,
+    count(appointments.id) as total_appointments
+    from patients
+    join appointments on (patients.id = appointments.patient_id)
+    where appointments.veterinarian_id = ${id}
+    group by patients.id`;
+    const patients = await sequelize.query(query);
+    return patients[0];
   }
 
   async create(data) {
