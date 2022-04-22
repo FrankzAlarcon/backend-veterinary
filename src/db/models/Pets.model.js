@@ -33,7 +33,7 @@ const PetsSchema = {
   },
   createdAt: {
     type: DataTypes.DATE,
-    default: Sequelize.NOW,
+    defaultValue: Sequelize.NOW,
     allowNull: false,
     field: 'created_at',
   },
@@ -54,7 +54,6 @@ class Pet extends Model {
     };
   }
 }
-
 module.exports = {
   Pet,
   PetsSchema,

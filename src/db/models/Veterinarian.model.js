@@ -26,7 +26,7 @@ const VeterinarianSchema = {
     type: DataTypes.DATE,
     allowNull: false,
     field: 'created_at',
-    defaultValue: Sequelize.NOW,
+    default: Sequelize.NOW,
   },
 };
 

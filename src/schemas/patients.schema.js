@@ -25,6 +25,11 @@ const addPetSchema = Joi.object({
   animalType: animalType.required(),
 });
 
+const getPetsFromPatientSchema = Joi.object({
+  patientId: id.required(),
+  petId: id.required(),
+});
+
 const updatePetSchema = Joi.object({
   petName,
   animalType,
@@ -36,4 +41,5 @@ module.exports = {
   getPatientByIdSchema,
   addPetSchema,
   updatePetSchema,
+  getPetsFromPatientSchema,
 };
