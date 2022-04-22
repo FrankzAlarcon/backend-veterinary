@@ -15,30 +15,30 @@ class VeterinarianService {
 
   async getOne(id) {
     const veterinarian = await models.Veterinarian.findByPk(id, {
-      include: [
-        {
-          association: 'tasks',
-          attributes: {
-            exclude: 'veterinarianId',
-          },
-        },
-        {
-          association: 'appointments',
-          include: [
-            {
-              association: 'patient',
-              attributes: {
-                exclude: 'createdAt',
-              },
-            },
-          ],
-          attributes: {
-            exclude: ['veterinarianId', 'patientId'],
-          },
-        },
-      ],
+      // include: [
+      //   {
+      //     association: 'tasks',
+      //     attributes: {
+      //       exclude: 'veterinarianId',
+      //     },
+      //   },
+      //   {
+      //     association: 'appointments',
+      //     include: [
+      //       {
+      //         association: 'patient',
+      //         attributes: {
+      //           exclude: 'createdAt',
+      //         },
+      //       },
+      //     ],
+      //     attributes: {
+      //       exclude: ['veterinarianId', 'patientId'],
+      //     },
+      //   },
+      // ],
       attributes: {
-        exclude: ['password'],
+        exclude: ['password', 'createdAt'],
       },
     });
     if (!veterinarian) {
@@ -68,6 +68,15 @@ class VeterinarianService {
     where appointments.veterinarian_id = ${id}`;
     const patients = await sequelize.query(query);
     return patients[0];
+  }
+
+  async getTasks(id) {
+    const tasks = await models.Task.findAll({
+      where: {
+        veterinarianId: id,
+      },
+    });
+    return tasks;
   }
 
   async create(data) {

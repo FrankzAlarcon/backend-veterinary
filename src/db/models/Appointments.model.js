@@ -2,6 +2,7 @@ const { DataTypes, Sequelize, Model } = require('sequelize');
 
 const { veterinarianTableName } = require('./Veterinarian.model');
 const { patientTableName } = require('./Patient.model');
+const { petsTableName } = require('./Pets.model');
 
 const appointmentsTableName = 'appointments';
 
@@ -33,6 +34,16 @@ const AppointmentsSchema = {
   price: {
     type: DataTypes.FLOAT,
     defaultValue: 0,
+  },
+  petId: {
+    type: DataTypes.INTEGER,
+    field: 'pet_id',
+    references: {
+      model: petsTableName,
+      key: 'id',
+    },
+    onDelete: 'SET NULL',
+    onUpdate: 'CASCADE',
   },
   veterinarianId: {
     type: DataTypes.INTEGER,
@@ -66,6 +77,7 @@ class Appointment extends Model {
   static associate(models) {
     this.belongsTo(models.Veterinarian, { as: 'veterinarian' });
     this.belongsTo(models.Patient, { as: 'patient' });
+    this.belongsTo(models.Pet, { as: 'pet' });
   }
 
   static config(sequelize) {

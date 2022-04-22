@@ -13,11 +13,6 @@ const PatientSchema = {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  petName: {
-    type: DataTypes.STRING,
-    allowNull: false,
-    field: 'pet_name',
-  },
   email: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -40,6 +35,7 @@ class Patient extends Model {
       foreignKey: 'patientId',
       otherKey: 'veterinarianId',
     });
+    this.hasMany(models.Pet, { as: 'pets', foreignKey: 'patientId' });
   }
 
   static config(sequelize) {

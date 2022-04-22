@@ -4,16 +4,15 @@ const id = Joi.number().integer();
 const name = Joi.string().min(3);
 const petName = Joi.string();
 const email = Joi.string().email();
+const animalType = Joi.string();
 
 const createPatientSchema = Joi.object({
   name: name.required(),
-  petName: petName.required(),
   email: email.required(),
 });
 
 const updatePatientSchema = Joi.object({
   name,
-  petName,
   email,
 });
 
@@ -21,4 +20,20 @@ const getPatientByIdSchema = Joi.object({
   id: id.required(),
 });
 
-module.exports = { createPatientSchema, updatePatientSchema, getPatientByIdSchema };
+const addPetSchema = Joi.object({
+  petName: petName.required(),
+  animalType: animalType.required(),
+});
+
+const updatePetSchema = Joi.object({
+  petName,
+  animalType,
+});
+
+module.exports = {
+  createPatientSchema,
+  updatePatientSchema,
+  getPatientByIdSchema,
+  addPetSchema,
+  updatePetSchema,
+};

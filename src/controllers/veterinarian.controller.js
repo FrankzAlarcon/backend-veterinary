@@ -48,6 +48,20 @@ router.get(
   },
 );
 
+router.get(
+  '/:id/tasks',
+  validationHandler(getVeterinarianByIdSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const tasks = await veterinarianService.getTasks(id);
+      response.success(res, tasks);
+    } catch (error) {
+      next(error);
+    }
+  },
+);
+
 // router.post(
 //   '/',
 //   validationHandler(createVeterinarianSchema, 'body'),

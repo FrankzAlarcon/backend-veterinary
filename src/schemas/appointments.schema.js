@@ -8,6 +8,7 @@ const symptoms = Joi.string().min(3);
 const prescription = Joi.string().min(0);
 const isCompleted = Joi.boolean();
 const price = Joi.number().min(0);
+const petId = Joi.number().integer();
 
 const createAppointmentSchema = Joi.object({
   veterinarianId: veterinarianId.required(),
@@ -16,6 +17,7 @@ const createAppointmentSchema = Joi.object({
   prescription,
   symptoms: symptoms.required(),
   isCompleted: isCompleted.required(),
+  petId: petId.required(),
   price,
 });
 
@@ -25,6 +27,7 @@ const updateAppointmentSchema = Joi.object({
   date,
   prescription,
   symptoms,
+  petId,
   isCompleted,
   price,
 });

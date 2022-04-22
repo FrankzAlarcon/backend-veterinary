@@ -3,6 +3,7 @@ const { veterinarianTableName, VeterinarianSchema } = require('../models/Veterin
 const { patientTableName, PatientSchema } = require('../models/Patient.model');
 const { tasksTableName, TaskSchema } = require('../models/Task.model');
 const { appointmentsTableName, AppointmentsSchema } = require('../models/Appointments.model');
+const { PetsSchema, petsTableName } = require('../models/Pets.model');
 
 module.exports = {
   async up(queryInterface, _Sequelize) {
@@ -14,6 +15,7 @@ module.exports = {
      */
     await queryInterface.createTable(veterinarianTableName, VeterinarianSchema);
     await queryInterface.createTable(patientTableName, PatientSchema);
+    await queryInterface.createTable(petsTableName, PetsSchema);
     await queryInterface.createTable(tasksTableName, TaskSchema);
     await queryInterface.createTable(appointmentsTableName, AppointmentsSchema);
   },
@@ -27,6 +29,7 @@ module.exports = {
      */
     await queryInterface.dropTable(veterinarianTableName);
     await queryInterface.dropTable(patientTableName);
+    await queryInterface.dropTable(petsTableName);
     await queryInterface.dropTable(tasksTableName);
     await queryInterface.dropTable(appointmentsTableName);
   },
